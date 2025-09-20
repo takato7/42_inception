@@ -16,7 +16,8 @@ up:
 down:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML) down
 
-rmi:
-	docker rmi $(PROJECT)-$(IMAGES)
+rmi: down
+# 	docker rmi $(PROJECT)-nginx
+	docker rmi $(PROJECT)-wordpress
 
 .PHONY: up down

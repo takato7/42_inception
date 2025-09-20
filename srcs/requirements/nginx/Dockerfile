@@ -24,7 +24,7 @@ RUN ./auto/configure --with-http_ssl_module \
  && make && make install \
  && apk del .build-deps
 
- # nginx will be installed into /usr/local/nginx directory
+# nginx will be installed into /usr/local/nginx directory
 WORKDIR /usr/local/nginx
 RUN rm -rf /build/nginx
 

@@ -1,6 +1,67 @@
 services:
   nginx:
+    depends_on:
+      - wordpress
     build: ./requirements/nginx/
     ports:
       - "443:443"
-    env_file: ".env"
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    # env_file: ".env"
+    networks:
+      - frontend
+    volumes:
+      - db_wordpress:${WP_PATH}
+      # - type: bind
+      #   source: ${HOST_DB_PATH}/wordpress
+      #   target: ${WP_PATH}
+    # volumes:
+    #   - db_wordpress:/etc/data
+
+  wordpress:
+        # depends_on:
+        #     - mariadb
+    build: ./requirements/wordpress/
+        # env_file: "./.env"
+    networks:
+      - frontend
+          # - backend
+    volumes:
+      - db_wordpress:${WP_PATH}
+      # - type: bind
+      #   source: ${HOST_DB_PATH}/wordpress
+      #   target: ${WP_PATH}
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - WP_PATH=${WP_PATH}
+    secrets:
+      - db_password
+
+#     mariadb:
+#         build: ./requiements/mariadb/
+#         env_file: ".env"
+#         networkd:
+#             - backend
+#         volumes:
+#             - db_data:/var/lib/mariadb
+#         secrets:
+#             - db_root_password
+#             - db_password
+
+networks:
+    frontend:
+      # use the default network driver
+      driver: bridge
+    backend:
+      driver: bridge
+
+volumes:
+  db_wordpress:
+  # db_data:
+
+secrets:
+  db_password:
+    file: ../secrets/db_password.txt
+#     db_root_password:
+#         file: db_root_password.txt
+

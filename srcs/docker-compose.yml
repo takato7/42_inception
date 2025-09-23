@@ -7,61 +7,66 @@ services:
       - "443:443"
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
-    # env_file: ".env"
     networks:
       - frontend
     volumes:
-      - db_wordpress:${WP_PATH}
+      - db_wordpress:${WP_VOLUME}
       # - type: bind
       #   source: ${HOST_DB_PATH}/wordpress
-      #   target: ${WP_PATH}
-    # volumes:
-    #   - db_wordpress:/etc/data
+      #   target: ${WP_VOLUME}
 
   wordpress:
-        # depends_on:
-        #     - mariadb
+    depends_on:
+      - mariadb
     build: ./requirements/wordpress/
-        # env_file: "./.env"
     networks:
       - frontend
-          # - backend
+      - backend
     volumes:
-      - db_wordpress:${WP_PATH}
+      - db_wordpress:${WP_VOLUME}
       # - type: bind
       #   source: ${HOST_DB_PATH}/wordpress
-      #   target: ${WP_PATH}
+      #   target: ${WP_VOLUME}
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
-      - WP_PATH=${WP_PATH}
+      - WP_DB_NAME=${WP_DB_NAME}
+      - WP_USER_NAME=${WP_USER_NAME}
+      - WP_VOLUME=${WP_VOLUME}
+      - WP_DB_PASSWORD_FILE=${WP_DB_PASSWORD_FILE}
     secrets:
       - db_password
 
-#     mariadb:
-#         build: ./requiements/mariadb/
-#         env_file: ".env"
-#         networkd:
-#             - backend
-#         volumes:
-#             - db_data:/var/lib/mariadb
-#         secrets:
-#             - db_root_password
-#             - db_password
+  mariadb:
+    build: ./requirements/mariadb/
+    networks:
+      - backend
+    volumes:
+      - db_data:${MARIADB_VOLUME}
+    environment:
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_VOLUME=${MARIADB_VOLUME}
+      - MARIADB_WP_DB_NAME=${MARIADB_WP_DB_NAME}
+      - MARIADB_WP_USER_NAME=${MARIADB_WP_USER_NAME}
+      - MARIADB_ROOT_PASSWORD_FILE=${MARIADB_ROOT_PASSWORD_FILE}
+      - MARIADB_PASSWORD_FILE=${MARIADB_PASSWORD_FILE}
+    secrets:
+      - db_root_password
+      - db_password
 
+# use the default network driver
 networks:
     frontend:
-      # use the default network driver
       driver: bridge
     backend:
       driver: bridge
 
 volumes:
   db_wordpress:
-  # db_data:
+  db_data:
 
 secrets:
   db_password:
     file: ../secrets/db_password.txt
-#     db_root_password:
-#         file: db_root_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt
 

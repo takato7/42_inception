@@ -1,6 +1,7 @@
 FROM alpine:3.21 AS php-fpm
 
-ENV PHP_URL="https://www.php.net/distributions/php-8.3.25.tar.xz"
+ENV PHP_VERSION="8.3.25"
+ENV PHP_URL="https://www.php.net/distributions/php-$PHP_VERSION.tar.xz"
 ENV SRC_DIR=/usr/src
 
 # install prerequisites to build php binary and delete cache
@@ -27,13 +28,16 @@ RUN mkdir -p $SRC_DIR \
  && curl -fsSL -o php.tar.xz $PHP_URL \
  && tar -Jxf php.tar.xz --strip-components=1 \
  && ./configure \
-    --disable-phpdbg \
+    --with-mysqli \
+    --enable-mysqlnd \
     --enable-fpm \
     --with-fpm-user=www-data \
     --with-fpm-group=www-data \
     --with-openssl \
     --with-curl \
- && make && make install \
+    --disable-cgi \
+    --disable-phpdbg \
+ && make -j $(nproc) && make install \
  && make clean
 
 # php-fpm will be installed into /usr/local directory after installation
@@ -41,12 +45,12 @@ ENV INSTALL_DIR=/usr/local
 
 # obtain and move configuration files to their correct locations
 RUN cd $SRC_DIR \
- && cp php.ini-development $INSTALL_DIR/php/php.ini \
- && mv $INSTALL_DIR/etc/php-fpm.d/www.conf.default $INSTALL_DIR/etc/php-fpm.d/www.conf
+ && cp php.ini-development $INSTALL_DIR/php/php.ini
 
 # inject my php-fpm configuration file
 # set daemonize = no and include=/usr/local/etc/php-fpm.d/*.conf (for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf")
-COPY ./conf/php-fpm.conf /usr/local/etc/
+COPY ./conf/php-fpm.conf $INSTALL_DIR/etc/
+COPY ./conf/www.conf $INSTALL_DIR/etc/php-fpm.d/
 
 # clean up unneccesarry files and strip unneeded symbols from binaries (to reduce image size)
 RUN find -type f -name '*.a' -delete \
@@ -72,25 +76,42 @@ RUN apk add --update-cache \
     curl \
     openssl \
     pcre \
-    redis
+    redis \
+    tar \
+    bash \
+ && rm -rf /var/cache/apk/*
 
-# ensure www-data user exists
-# 82 is the standard uid/gid for "www-data" in Alpine
-# https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
-
-WORKDIR $WP_PATH
-RUN	adduser -u 82 -D -S -G www-data www-data
- && chown www-data:www-data $WP_PATH
-
-# # matching compatibility with PHP, mariaDB version (https://make.wordpress.org/hosting/handbook/server-environment/)
+# check compatibility with PHP, mariaDB version (https://make.wordpress.org/hosting/handbook/server-environment/)
 ENV WP_VERSION="6.8.2"
 ENV WP_URL="https://wordpress.org/wordpress-$WP_VERSION.tar.gz"
 
-RUN curl -fsSL -o wordpress.tar.gz $WP_URL \
+RUN mkdir -p /usr/src/wordpress \
+ && cd /usr/src/wordpress \
+ && curl -fsSL -o wordpress.tar.gz $WP_URL \
  && tar -zxf wordpress.tar.gz --strip-components=1 \
- && mv wp-config-sample.php wp-config.php \
  && rm -fr wordpress.tar.gz
+
+# add www-data:www-data user and group and change ownership of wordpress files
+# 82 is the standard uid/gid for "www-data" in Alpine
+# https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install?h=3.14-stable
+RUN	adduser -u 82 -D -S -G www-data www-data \
+ && chown -R www-data:www-data /usr/src/wordpress
+
+# creat root directory of wordpress files to be mounted
+RUN mkdir -p /var/www/html \
+ && chown www-data:www-data /var/www/html
+
+# inject the tools to move wordpress files to root directory, if it does not exist
+# and create and configure the wp-config.php file
+COPY --chown=www-data:www-data tools/wp-config-docker.php /usr/src/wordpress
+COPY tools/docker-entrypoint.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+WORKDIR /var/www/html
 
 EXPOSE 9000
 
-CMD [ "/usr/local/sbin/php-fpm" ]
+ENTRYPOINT [ "docker-entrypoint.sh" ]
+
+CMD [ "php-fpm" ]

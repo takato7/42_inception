@@ -21,7 +21,7 @@ WORKDIR /build/nginx
 COPY ./conf/nginx.conf conf/nginx.conf
 
 RUN ./auto/configure --with-http_ssl_module \
- && make && make install \
+ && make -j $(nproc) && make install \
  && apk del .build-deps
 
 # nginx will be installed into /usr/local/nginx directory

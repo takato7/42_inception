@@ -8,16 +8,20 @@ IMAGES		:=	nginx
 
 COMPOSE		:=	docker compose
 
-FLAGS		:=	-d
+FLAGS		:=	-d --build
 
 up:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML) up $(FLAGS)
 
 down:
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML) down
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML) down -v
 
-rmi: down
-# 	docker rmi $(PROJECT)-nginx
+rmi-all: down
+	docker rmi $(PROJECT)-nginx
 	docker rmi $(PROJECT)-wordpress
+	docker rmi $(PROJECT)-mariadb
 
-.PHONY: up down
+config:
+	docker compose -f $(SRCS_DIR)/$(YAML) config
+
+.PHONY: up down config

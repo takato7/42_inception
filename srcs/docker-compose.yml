@@ -44,11 +44,11 @@ services:
       - db_data:${MARIADB_VOLUME}
     environment:
       - MARIADB_USER=${MARIADB_USER}
-      - MARIADB_VOLUME=${MARIADB_VOLUME}
-      - MARIADB_WP_DB_NAME=${MARIADB_WP_DB_NAME}
-      - MARIADB_WP_USER_NAME=${MARIADB_WP_USER_NAME}
-      - MARIADB_ROOT_PASSWORD_FILE=${MARIADB_ROOT_PASSWORD_FILE}
       - MARIADB_PASSWORD_FILE=${MARIADB_PASSWORD_FILE}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_ROOT_PASSWORD_FILE=${MARIADB_ROOT_PASSWORD_FILE}
+      - MARIADB_VOLUME=${MARIADB_VOLUME}
+      - MARIADB_WP_USER_NAME=${MARIADB_WP_USER_NAME}
     secrets:
       - db_root_password
       - db_password
@@ -64,6 +64,7 @@ volumes:
   db_wordpress:
   db_data:
 
+# Secrets are mounted as a file in /run/secrets/<secret_name> inside the container.
 secrets:
   db_password:
     file: ../secrets/db_password.txt

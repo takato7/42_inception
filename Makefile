@@ -1,27 +1,30 @@
 SRCS_DIR	:=	srcs
 
-YAML		:=	docker-compose.yml
+VOLUME_ROOT	:=	/home/tmitsuya/data
+VOLUME_DIRS	:=	$(VOLUME_ROOT)/wordpress $(VOLUME_ROOT)/mariadb
 
-PROJECT		:=	inception
-
-IMAGES		:=	nginx
+YAML_FILE	:=	docker-compose.yml
 
 COMPOSE		:=	docker compose
+UPFLAGS		:=	-d --build
+DOWNFLAGS	:=	-v
 
-FLAGS		:=	-d --build
+up: | $(VOLUME_DIRS)
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) up $(UPFLAGS)
 
-up:
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML) up $(FLAGS)
+$(VOLUME_DIRS):
+	mkdir -p $@
 
 down:
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML) down -v
-
-rmi-all: down
-	docker rmi $(PROJECT)-nginx
-	docker rmi $(PROJECT)-wordpress
-	docker rmi $(PROJECT)-mariadb
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) down $(DOWNFLAGS)
 
 config:
-	docker compose -f $(SRCS_DIR)/$(YAML) config
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) config
+
+log:
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) logs
+
+exec:
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) exec -it 
 
 .PHONY: up down config

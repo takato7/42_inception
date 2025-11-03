@@ -1,14 +1,19 @@
 services:
+
+# set a restart policy for each 
+# https://docs.docker.com/engine/containers/start-containers-automatically/
+
   nginx:
     depends_on:
       - wordpress
     build: ./requirements/nginx/
+    restart: unless-stopped
     ports:
       - "443:443"
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
     networks:
-      - frontend
+      - docker-network
     volumes:
       - db_wordpress:${WP_VOLUME}
       # - type: bind
@@ -17,11 +22,13 @@ services:
 
   wordpress:
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
+        restart: true
     build: ./requirements/wordpress/
+    restart: unless-stopped
     networks:
-      - frontend
-      - backend
+      - docker-network
     volumes:
       - db_wordpress:${WP_VOLUME}
       # - type: bind
@@ -33,36 +40,47 @@ services:
       - WP_USER_NAME=${WP_USER_NAME}
       - WP_VOLUME=${WP_VOLUME}
       - WP_DB_PASSWORD_FILE=${WP_DB_PASSWORD_FILE}
+      - WP_DB_HOST=${WP_DB_HOST}
     secrets:
       - db_password
 
   mariadb:
     build: ./requirements/mariadb/
+    restart: unless-stopped
     networks:
-      - backend
+      - docker-network
     volumes:
-      - db_data:${MARIADB_VOLUME}
+      - db_mariadb:${MARIADB_VOLUME}
     environment:
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_PASSWORD_FILE=${MARIADB_PASSWORD_FILE}
       - MARIADB_DATABASE=${MARIADB_DATABASE}
       - MARIADB_ROOT_PASSWORD_FILE=${MARIADB_ROOT_PASSWORD_FILE}
       - MARIADB_VOLUME=${MARIADB_VOLUME}
-      - MARIADB_WP_USER_NAME=${MARIADB_WP_USER_NAME}
     secrets:
       - db_root_password
       - db_password
 
 # use the default network driver
 networks:
-    frontend:
-      driver: bridge
-    backend:
+    docker-network:
       driver: bridge
 
+# specify a mount point on the host for a named volume
+# https://forums.docker.com/t/how-to-mount-docker-volume-along-with-subfolders-on-the-host/120482/2
 volumes:
   db_wordpress:
-  db_data:
+    # driver: local
+    # driver_opts:
+    #   type: 'none'
+    #   o: 'bind'
+    #   device: '/home/tmitsuya/data/wordpress'
+  db_mariadb:
+    # driver: local
+    # driver_opts:
+    #   type: 'none'
+    #   o: 'bind'
+    #   device: '/home/tmitsuya/data/mariadb'
 
 # Secrets are mounted as a file in /run/secrets/<secret_name> inside the container.
 secrets:

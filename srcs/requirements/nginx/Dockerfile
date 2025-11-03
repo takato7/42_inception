@@ -18,7 +18,7 @@ RUN apk add --update-cache --virtual .build-deps \
 WORKDIR /build/nginx
 
 # overwrite its original configuration file
-COPY ./conf/nginx.conf conf/nginx.conf
+COPY conf/nginx.conf conf/nginx.conf
 
 RUN ./auto/configure --with-http_ssl_module \
  && make -j $(nproc) && make install \
@@ -34,12 +34,16 @@ RUN apk add --update-cache \
 	openssl
 
 # generate private key and certificate for TLS protocol
-RUN mkdir -p conf/ssl \
- && openssl req -x509 -newkey rsa:2048 -nodes \
- -keyout conf/ssl/nginx_key.pem \
- -out conf/ssl/nginx_self_cert.pem \
- -subj "/C=NL/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
+# RUN mkdir -p conf/ssl \
+#  && openssl req -x509 -newkey rsa:2048 -nodes \
+#  -keyout conf/ssl/nginx_key.pem \
+#  -out conf/ssl/nginx_self_cert.pem \
+#  -subj "/C=NL/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
+
+COPY tools/docker-entrypoint.sh /usr/local/bin/
 
 EXPOSE 443
+
+ENTRYPOINT [ "docker-entrypoint.sh" ]
 
 CMD [ "sbin/nginx", "-g", "daemon off;"]

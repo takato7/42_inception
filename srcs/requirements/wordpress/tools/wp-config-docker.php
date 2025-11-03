@@ -36,7 +36,7 @@ define( 'DB_NAME', getenv_docker('WP_DB_NAME', 'wordpress') );
 define( 'DB_USER', getenv_docker('WP_USER_NAME', 'username') );
 
 /** Database password */
-define( 'DB_PASSWORD', getenv_docker('WP_DB_PASSWORD_FILE', 'password') );
+define( 'DB_PASSWORD', getenv_docker('WP_DB_PASSWORD', 'password') );
 
 /** Database hostname */
 define( 'DB_HOST', getenv_docker('WP_DB_HOST', 'localhost') );
@@ -98,7 +98,6 @@ $table_prefix = 'wp_';
 define( 'WP_DEBUG', false );
 
 /* Add any custom values between this line and the "stop editing" line. */
-
 
 
 /* That's all, stop editing! Happy publishing. */

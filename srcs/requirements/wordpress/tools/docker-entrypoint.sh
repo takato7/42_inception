@@ -1,16 +1,21 @@
 #!/bin/bash
 
-# Check if wordpress source files already exit, if not copy them from image and configure its configuration file
+# Check if wordpress source files already exit, if not, copy them from the source directory and configure its configuration file
 
 # set -e: exit on any error, -u: error on unset variables, -o pipefail: pipeline fails if any command fails
 set -euo pipefail
 
 user="www-data"
 group="www-data"
-wp_source=/usr/src/wordpress
+wp_source="/usr/src/wordpress"
 
-if [ ! -e index.php ] && [ ! -e wp-includes/version.php ]; then
-    echo "WordPress not found in $PWD - copying now"
+if [ -z $WP_VOLUME ]; then
+	export "WP_VOLUME=/var/www/html"
+	mkdir -p $WP_VOLUME
+fi
+
+if [ ! -e "${WP_VOLUME}/index.php" ] && [ ! -e "${WP_VOLUME}/wp-includes/version.php" ]; then
+    echo "WordPress not found in $WP_VOLUME - copying now"
 
     # using "tar . | tar" to copy files to keep correct owners, permissions, and avoids overwrite issues.
     sourceTarArgs=(
@@ -22,6 +27,7 @@ if [ ! -e index.php ] && [ ! -e wp-includes/version.php ]; then
     targetTarArgs=(
         --extract
         --file -
+		--directory "$WP_VOLUME"
     )
     tar "${sourceTarArgs[@]}" . | tar "${targetTarArgs[@]}"
 
@@ -37,8 +43,11 @@ if [ ! -e index.php ] && [ ! -e wp-includes/version.php ]; then
         next
     }
     { print }
-    ' "wp-config-docker.php" > wp-config.php
-    chown "$user:$group" wp-config.php
+    ' "${WP_VOLUME}/wp-config-docker.php" > "${WP_VOLUME}/wp-config.php"
+    echo "Complete the copying process"
 fi
+
+# change the ownership of the volume directory after the creation and the mount by the docker compose
+chown -R "$user:$group" $WP_VOLUME
 
 exec "$@"

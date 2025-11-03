@@ -23,6 +23,8 @@ RUN apk add --update-cache --virtual .build-deps \
     openssl-dev \
  && rm -rf /var/cache/apk/*
 
+# obtain and unpack the PHP source to configure it with PHP-FPM and MySQL support
+# https://www.php.net/manual/en/install.unix.nginx.php
 RUN mkdir -p $SRC_DIR \
  && cd $SRC_DIR \
  && curl -fsSL -o php.tar.xz $PHP_URL \
@@ -84,8 +86,14 @@ RUN apk add --update-cache \
 # check compatibility with PHP, mariaDB version (https://make.wordpress.org/hosting/handbook/server-environment/)
 ENV WP_VERSION="6.8.2"
 ENV WP_URL="https://wordpress.org/wordpress-$WP_VERSION.tar.gz"
+ENV WP_CLI_URL="https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
 
 RUN mkdir -p /usr/src/wordpress \
+# wordpress command line tool to install and create database for wordpress
+# https://make.wordpress.org/cli/handbook/guides/installing/
+ && curl -O $WP_CLI_URL \
+ && chmod +x wp-cli.phar \
+ && mv wp-cli.phar /usr/local/bin/wp \
  && cd /usr/src/wordpress \
  && curl -fsSL -o wordpress.tar.gz $WP_URL \
  && tar -zxf wordpress.tar.gz --strip-components=1 \
@@ -98,17 +106,17 @@ RUN	adduser -u 82 -D -S -G www-data www-data \
  && chown -R www-data:www-data /usr/src/wordpress
 
 # creat root directory of wordpress files to be mounted
-RUN mkdir -p /var/www/html \
- && chown www-data:www-data /var/www/html
+# RUN mkdir -p /var/www/html \
+#  && chown www-data:www-data /var/www/html
 
 # inject the tools to move wordpress files to root directory, if it does not exist
 # and create and configure the wp-config.php file
 COPY --chown=www-data:www-data tools/wp-config-docker.php /usr/src/wordpress
 COPY tools/docker-entrypoint.sh /usr/local/bin/
 
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-WORKDIR /var/www/html
+# WORKDIR /var/www/html
 
 EXPOSE 9000
 

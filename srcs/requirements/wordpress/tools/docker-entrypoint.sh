@@ -45,6 +45,22 @@ if [ ! -e "${WP_VOLUME}/index.php" ] && [ ! -e "${WP_VOLUME}/wp-includes/version
     { print }
     ' "${WP_VOLUME}/wp-config-docker.php" > "${WP_VOLUME}/wp-config.php"
     echo "Complete the copying process"
+
+	# create the wordpress database through by wp-cli tool
+	# Runs CREATE_DATABASE SQL statement using DB_HOST, DB_NAME, DB_USER and DB_PASSWORD database credentials specified in wp-config.php.
+	# https://developer.wordpress.org/cli/commands/db/create/
+	# wp db create
+
+	# create the wordpress tables in the database by wp-cli tool
+	echo "Install WordPress in 5 seconds"
+	wp core install \
+			--allow-root \
+			--path=$WP_VOLUME \
+			--url=$WP_SITEURL --title=$WP_SITE_TITLE \
+			--admin_user=$WP_ADMIN_NAME --admin_email=$WP_ADMIN_EMAIL --skip-email \
+			--prompt=admin_password < $WP_ADMIN_PASSWORD_FILE \
+			--quiet
+
 fi
 
 # change the ownership of the volume directory after the creation and the mount by the docker compose

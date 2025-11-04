@@ -3,6 +3,7 @@
 # set -e: exit on any error, -u: error on unset variables, -o pipefail: pipeline fails if any command fails
 set -euo pipefail
 
+# check if installation process of wordpress tables are done
 tables_count=$(
 	mariadb -u $WP_DB_USER -p $WP_DB_NAME -h $WP_DB_HOST \
 	-e 'SHOW TABLES;' --password="$(< "$WP_DB_PASSWORD_FILE")" \

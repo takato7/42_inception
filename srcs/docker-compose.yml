@@ -5,7 +5,8 @@ services:
 
   nginx:
     depends_on:
-      - wordpress
+      wordpress:
+        condition: service_healthy
     build: ./requirements/nginx/
     restart: unless-stopped
     ports:
@@ -16,9 +17,6 @@ services:
       - docker-network
     volumes:
       - db_wordpress:${WP_VOLUME}
-      # - type: bind
-      #   source: ${HOST_DB_PATH}/wordpress
-      #   target: ${WP_VOLUME}
 
   wordpress:
     depends_on:
@@ -31,9 +29,6 @@ services:
       - docker-network
     volumes:
       - db_wordpress:${WP_VOLUME}
-      # - type: bind
-      #   source: ${HOST_DB_PATH}/wordpress
-      #   target: ${WP_VOLUME}
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
       - WP_DB_NAME=${WP_DB_NAME}
@@ -41,8 +36,18 @@ services:
       - WP_VOLUME=${WP_VOLUME}
       - WP_DB_PASSWORD_FILE=${WP_DB_PASSWORD_FILE}
       - WP_DB_HOST=${WP_DB_HOST}
+      - WP_SITEURL=${WP_SITEURL}
+      - WP_SITE_TITLE=${WP_SITE_TITLE}
+      - WP_ADMIN_NAME=${WP_ADMIN_NAME}
+      - WP_ADMIN_PASSWORD_FILE=${WP_ADMIN_PASSWORD_FILE}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 5s
+      retries: 5
     secrets:
       - db_password
+      - wp_admin_password
 
   mariadb:
     build: ./requirements/mariadb/
@@ -59,7 +64,7 @@ services:
       - MARIADB_VOLUME=${MARIADB_VOLUME}
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
-      interval: 10s
+      interval: 5s
       retries: 5
     secrets:
       - db_root_password
@@ -92,4 +97,6 @@ secrets:
     file: ../secrets/db_password.txt
   db_root_password:
     file: ../secrets/db_root_password.txt
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
 

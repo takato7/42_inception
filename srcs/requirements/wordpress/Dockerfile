@@ -81,6 +81,8 @@ RUN apk add --update-cache \
     redis \
     tar \
     bash \
+	# to healthcheck if WordPress database and tables are created, then ready 
+	mariadb-client \
  && rm -rf /var/cache/apk/*
 
 # check compatibility with PHP, mariaDB version (https://make.wordpress.org/hosting/handbook/server-environment/)
@@ -110,6 +112,7 @@ RUN	adduser -u 82 -D -S -G www-data www-data \
 # and create and configure the wp-config.php file
 COPY --chown=www-data:www-data tools/wp-config-docker.php /usr/src/wordpress
 COPY tools/docker-entrypoint.sh /usr/local/bin/
+COPY tools/healthcheck.sh /usr/local/bin/
 
 EXPOSE 9000
 

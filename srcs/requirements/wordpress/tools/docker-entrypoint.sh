@@ -46,12 +46,8 @@ if [ ! -e "${WP_VOLUME}/index.php" ] && [ ! -e "${WP_VOLUME}/wp-includes/version
     ' "${WP_VOLUME}/wp-config-docker.php" > "${WP_VOLUME}/wp-config.php"
     echo "Complete the copying process"
 
-	# create the wordpress database through by wp-cli tool
-	# Runs CREATE_DATABASE SQL statement using DB_HOST, DB_NAME, DB_USER and DB_PASSWORD database credentials specified in wp-config.php.
-	# https://developer.wordpress.org/cli/commands/db/create/
-	# wp db create
-
 	# create the wordpress tables in the database by wp-cli tool
+	# https://developer.wordpress.org/cli/commands/core/install/
 	echo "Install WordPress in 5 seconds"
 	wp core install \
 			--allow-root \

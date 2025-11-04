@@ -57,6 +57,10 @@ services:
       - MARIADB_DATABASE=${MARIADB_DATABASE}
       - MARIADB_ROOT_PASSWORD_FILE=${MARIADB_ROOT_PASSWORD_FILE}
       - MARIADB_VOLUME=${MARIADB_VOLUME}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 5s
+      retries: 5
     secrets:
       - db_root_password
       - db_password

@@ -45,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && printf "[mariadb]\nhost-cache-size=0\nskip-name-resolve\n" > /etc/mysql/mariadb.conf.d/05-skipcache.cnf
 
 COPY tools/docker-entrypoint.sh /usr/local/bin/
+COPY tools/healthcheck.sh /usr/local/bin/
 
 EXPOSE 3306
 

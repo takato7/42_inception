@@ -1,6 +1,6 @@
 services:
 
-# set a restart policy for each 
+# set a restart policy for each service
 # https://docs.docker.com/engine/containers/start-containers-automatically/
 
   nginx:
@@ -37,7 +37,7 @@ services:
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
       - WP_DB_NAME=${WP_DB_NAME}
-      - WP_USER_NAME=${WP_USER_NAME}
+      - WP_DB_USER=${WP_DB_USER}
       - WP_VOLUME=${WP_VOLUME}
       - WP_DB_PASSWORD_FILE=${WP_DB_PASSWORD_FILE}
       - WP_DB_HOST=${WP_DB_HOST}
@@ -59,7 +59,7 @@ services:
       - MARIADB_VOLUME=${MARIADB_VOLUME}
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
-      interval: 5s
+      interval: 10s
       retries: 5
     secrets:
       - db_root_password

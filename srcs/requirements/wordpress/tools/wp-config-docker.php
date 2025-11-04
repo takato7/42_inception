@@ -33,7 +33,7 @@ function getenv_docker($env, $default)
 define( 'DB_NAME', getenv_docker('WP_DB_NAME', 'wordpress') );
 
 /** Database username */
-define( 'DB_USER', getenv_docker('WP_USER_NAME', 'username') );
+define( 'DB_USER', getenv_docker('WP_DB_USER', 'username') );
 
 /** Database password */
 define( 'DB_PASSWORD', getenv_docker('WP_DB_PASSWORD', 'password') );

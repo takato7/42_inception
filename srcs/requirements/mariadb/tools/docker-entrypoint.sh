@@ -7,8 +7,8 @@ function docker_setup_query()
 	# Read from the environment variables or the secrets files for password
 	user="$MARIADB_USER"
 	database="$MARIADB_DATABASE"
-	root_password="$(< "${MARIADB_ROOT_PASSWORD_FILE}")"
-	password="$(< "$MARIADB_PASSWORD_FILE")"	
+	root_password="$(< "$MARIADB_ROOT_PASSWORD_FILE")"
+	password="$(< "$MARIADB_PASSWORD_FILE")"
 	
 	# Securing system user
 	# https://mariadb.com/docs/server/clients-and-utilities/deployment-tools/mariadb-secure-installation
@@ -17,7 +17,7 @@ function docker_setup_query()
 	remove_remote_root="DELETE FROM mysql.global_priv WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
 	remove_anonymous_users="DELETE FROM mysql.global_priv WHERE User='';"
 
-	# Create mysql@localhost
+	# Create mysql@localhost for 'mysql' system user
 	create_mysql="CREATE USER mysql@localhost IDENTIFIED VIA unix_socket;"
 	mysql_grants="GRANT ALL PRIVILEGES ON *.* TO mysql@localhost;"
 
@@ -25,7 +25,7 @@ function docker_setup_query()
 	# https://developer.wordpress.org/advanced-administration/before-install/creating-database/
 	create_data_base="CREATE DATABASE IF NOT EXISTS $database;"
 	create_user="CREATE USER '$user'@'%' IDENTIFIED BY '$password';"
-	user_grants="GRANT ALL PRIVILEGES ON ${database}.* TO '$user'@'%';"	
+	user_grants="GRANT ALL PRIVILEGES ON ${database}.* TO '$user'@'%';"
 
 	# Reloading the privilege tables will ensure that all changes made
 	reload_privilege_tables="FLUSH PRIVILEGES;"
@@ -115,6 +115,7 @@ else
 fi
 
 if [ "$1" = "mariadbd" ]; then
+	# run the daemon as 'mysql' system user
 	exec "$@" --user=mysql --datadir="$MARIADB_VOLUME"
 else
 	exec "$@"

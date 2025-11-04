@@ -51,8 +51,8 @@ RUN cd $SRC_DIR \
 
 # inject my php-fpm configuration file
 # set daemonize = no and include=/usr/local/etc/php-fpm.d/*.conf (for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf")
-COPY ./conf/php-fpm.conf $INSTALL_DIR/etc/
-COPY ./conf/www.conf $INSTALL_DIR/etc/php-fpm.d/
+COPY conf/php-fpm.conf $INSTALL_DIR/etc/
+COPY conf/www.conf $INSTALL_DIR/etc/php-fpm.d/
 
 # clean up unneccesarry files and strip unneeded symbols from binaries (to reduce image size)
 RUN find -type f -name '*.a' -delete \
@@ -88,12 +88,13 @@ ENV WP_VERSION="6.8.2"
 ENV WP_URL="https://wordpress.org/wordpress-$WP_VERSION.tar.gz"
 ENV WP_CLI_URL="https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
 
-RUN mkdir -p /usr/src/wordpress \
 # wordpress command line tool to install and create database for wordpress
 # https://make.wordpress.org/cli/handbook/guides/installing/
- && curl -O $WP_CLI_URL \
+RUN curl -O $WP_CLI_URL \
  && chmod +x wp-cli.phar \
  && mv wp-cli.phar /usr/local/bin/wp \
+# download wordpress files with its version fixed
+ && mkdir -p /usr/src/wordpress \
  && cd /usr/src/wordpress \
  && curl -fsSL -o wordpress.tar.gz $WP_URL \
  && tar -zxf wordpress.tar.gz --strip-components=1 \
@@ -105,18 +106,10 @@ RUN mkdir -p /usr/src/wordpress \
 RUN	adduser -u 82 -D -S -G www-data www-data \
  && chown -R www-data:www-data /usr/src/wordpress
 
-# creat root directory of wordpress files to be mounted
-# RUN mkdir -p /var/www/html \
-#  && chown www-data:www-data /var/www/html
-
 # inject the tools to move wordpress files to root directory, if it does not exist
 # and create and configure the wp-config.php file
 COPY --chown=www-data:www-data tools/wp-config-docker.php /usr/src/wordpress
 COPY tools/docker-entrypoint.sh /usr/local/bin/
-
-# RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# WORKDIR /var/www/html
 
 EXPOSE 9000
 

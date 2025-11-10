@@ -36,4 +36,16 @@ exec:
 	read command; \
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) exec -it $$serive_name $$command
 
-.PHONY: up down config log exec
+run:
+	@echo -n "Enter the name of service listed in compose.yml file to execute: "; \
+	read serive_name; \
+	echo -n "Enter the command: "; \
+	read command; \
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) run -it $$serive_name $$command
+
+rm_container:
+	docker stop $$(docker ps -qa)
+	docker rm $$(docker ps -qa)
+
+
+.PHONY: up down config log exec run rm_container

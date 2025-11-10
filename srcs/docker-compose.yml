@@ -37,14 +37,16 @@ services:
       - WP_DB_PASSWORD_FILE=${WP_DB_PASSWORD_FILE}
       - WP_DB_HOST=${WP_DB_HOST}
       - WP_SITEURL=${WP_SITEURL}
+      # - WP_HOME=${WP_HOME}
       - WP_SITE_TITLE=${WP_SITE_TITLE}
       - WP_ADMIN_NAME=${WP_ADMIN_NAME}
       - WP_ADMIN_PASSWORD_FILE=${WP_ADMIN_PASSWORD_FILE}
       - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
+
       interval: 5s
-      retries: 5
+      retries: 10
     secrets:
       - db_password
       - wp_admin_password
@@ -65,7 +67,7 @@ services:
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
       interval: 5s
-      retries: 5
+      retries: 10
     secrets:
       - db_root_password
       - db_password

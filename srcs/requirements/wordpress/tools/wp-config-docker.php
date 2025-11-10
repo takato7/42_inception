@@ -99,6 +99,28 @@ define( 'WP_DEBUG', false );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
+// If behind a proxy server and using HTTPS, we need to alert WordPress of that fact
+// https://wordpress.org/support/article/administration-over-ssl/#using-a-reverse-proxy
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) {
+	$_SERVER['HTTPS'] = 'on';
+}
+
+// if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+//     $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+// }
+
+// if (isset($_SERVER['HTTP_X_FORWARDED_PORT'])) {
+//     $_SERVER['SERVER_PORT'] = $_SERVER['HTTP_X_FORWARDED_PORT'];
+// }
+
+// define( 'WP_SITEURL', getenv_docker('WP_SITEURL', 'localhost') );
+// define( 'WP_HOME', getenv_docker('WP_HOME', 'localhost') );
+
+// foreach($_SERVER as $key => $value)
+// {
+// 	echo "Key:  $key => Value: $value\n";
+// 	print "</br>";
+// }
 
 /* That's all, stop editing! Happy publishing. */
 

@@ -1,17 +1,27 @@
-SRCS_DIR	:=	srcs
+SRCS_DIR		:=	srcs
 
-VOLUME_ROOT	:=	/home/tmitsuya/data
-VOLUME_DIRS	:=	$(VOLUME_ROOT)/wordpress $(VOLUME_ROOT)/mariadb
+VOLUME_ROOT		:=	/home/tmitsuya/data
+VOLUME_DIRS		:=	$(VOLUME_ROOT)/wordpress $(VOLUME_ROOT)/mariadb
 
-YAML_FILE	:=	docker-compose.yml
+YAML_FILE		:=	docker-compose.yml
 
-DOCKER		:=	docker
-COMPOSE		:=	docker compose
-UPFLAGS		:=	-d --build
-DOWNFLAGS	:=	-v
+DOCKER			:=	docker
+COMPOSE			:=	docker compose
+UPFLAGS			:=	-d
+DOWNFLAGS		:=	-v
+PHP_BASE_IMAGE	:=	php-fpm
+PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm/
+PHP_BASE_NAME	:=	$(PHP_BASE_IMAGE)-base
 
-up: | $(VOLUME_DIRS)
-	$(DOCKER) image prune
+all: up
+
+build-base:
+	$(DOCKER) build $(PHP_BASE_DIR) -t $(PHP_BASE_NAME)
+
+build: build-base
+	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) build
+
+up: build | $(VOLUME_DIRS)
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) up $(UPFLAGS)
 
 $(VOLUME_DIRS):
@@ -21,7 +31,7 @@ down:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) down $(DOWNFLAGS)
 
 ps:
-	docker ps -a
+	$(DOCKER) ps -a
 
 config:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) config
@@ -48,4 +58,4 @@ rm_container:
 	docker rm $$(docker ps -qa)
 
 
-.PHONY: up down config log exec run rm_container
+.PHONY: all build build-base up down ps config log exec run rm_container

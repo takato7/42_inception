@@ -53,9 +53,11 @@ run:
 	read command; \
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) run -it $$serive_name $$command
 
-rm_container:
+rm:
 	docker stop $$(docker ps -qa)
 	docker rm $$(docker ps -qa)
 
+rmi:
+	docker image prune -a
 
-.PHONY: all build build-base up down ps config log exec run rm_container
+.PHONY: all build build-base up down ps config log exec run rm rmi

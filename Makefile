@@ -12,11 +12,12 @@ DOWNFLAGS		:=	-v
 PHP_BASE_IMAGE	:=	php-fpm
 PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm/
 PHP_BASE_NAME	:=	$(PHP_BASE_IMAGE)-base
+IMAGE_VIRSION	:=	1.0.0
 
 all: up
 
 build-base:
-	$(DOCKER) build $(PHP_BASE_DIR) -t $(PHP_BASE_NAME)
+	$(DOCKER) build $(PHP_BASE_DIR) -t $(PHP_BASE_NAME):$(IMAGE_VIRSION)
 
 build: build-base
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) build

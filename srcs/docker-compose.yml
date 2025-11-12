@@ -7,7 +7,9 @@ services:
     depends_on:
       wordpress:
         condition: service_healthy
-    build: ./requirements/nginx/
+    build:
+      context: ./requirements/nginx/
+    image: inception-nginx:1.0.0
     restart: unless-stopped
     ports:
       - "443:443"
@@ -25,7 +27,9 @@ services:
       mariadb:
         condition: service_healthy
         restart: true
-    build: ./requirements/wordpress/
+    build:
+      context: ./requirements/wordpress/
+    image: inception-wordpress:1.0.0
     restart: unless-stopped
     networks:
       - docker-network
@@ -57,7 +61,9 @@ services:
       - wp_user_password
 
   mariadb:
-    build: ./requirements/mariadb/
+    build:
+      context: ./requirements/mariadb/
+    image: inception-mariadb:1.0.0
     restart: unless-stopped
     networks:
       - docker-network
@@ -82,7 +88,9 @@ services:
       mariadb:
         condition: service_healthy
         restart: true
-    build: ./requirements/bonus/adminer/
+    build:
+      context: ./requirements/bonus/adminer/
+    image: inception-adminer:1.0.0
     restart: unless-stopped
     networks:
       - docker-network

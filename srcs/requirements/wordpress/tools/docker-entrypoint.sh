@@ -46,16 +46,25 @@ if [ ! -e "${WP_VOLUME}/index.php" ] && [ ! -e "${WP_VOLUME}/wp-includes/version
     ' "${WP_VOLUME}/wp-config-docker.php" > "${WP_VOLUME}/wp-config.php"
     echo "Complete the copying process"
 
-	# create the wordpress tables in the database by wp-cli tool
+	# create the wordpress database and tables by wp-cli tool
+	# https://developer.wordpress.org/cli/commands/
+
+	echo "Install WordPress tables and create admin user"
 	# https://developer.wordpress.org/cli/commands/core/install/
-	echo "Install WordPress in 5 seconds"
-	wp core install \
-			--allow-root \
-			--path=$WP_VOLUME \
+	wp core install --allow-root --path=$WP_VOLUME \
 			--url=$WP_SITEURL --title=$WP_SITE_TITLE \
-			--admin_user=$WP_ADMIN_NAME --admin_email=$WP_ADMIN_EMAIL --skip-email \
+			--admin_user=$WP_ADMIN_NAME --admin_email=$WP_ADMIN_EMAIL \
+			--skip-email \
 			--prompt=admin_password < $WP_ADMIN_PASSWORD_FILE \
 			--quiet
+
+	echo "create a new editor user"
+	# https://developer.wordpress.org/cli/commands/user/create/
+	wp user create --allow-root --path=$WP_VOLUME \
+			$WP_USER_NAME $WP_USER_EMAIL \
+			--role=$WP_USER_ROLE \
+			--user_pass="$(< "$WP_USER_PASSWORD_FILE")" \
+			--porcelain
 
 fi
 

@@ -39,6 +39,8 @@ RUN mkdir -p $SRC_DIR \
     --with-curl \
     --disable-cgi \
     --disable-phpdbg \
+	# for Adminer
+	--with-zlib \
  && make -j $(nproc) && make install \
  && make clean
 

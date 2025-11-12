@@ -11,12 +11,14 @@ services:
     restart: unless-stopped
     ports:
       - "443:443"
-    environment:
-      - DOMAIN_NAME=${DOMAIN_NAME}
     networks:
       - docker-network
     volumes:
-      - db_wordpress:${WP_VOLUME}
+      - db_wordpress:${DOCUMENT_ROOT_WP}
+      - db_adminer:${DOCUMENT_ROOT_ADMINER}
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - DOCUMENT_ROOT_HTTP=${DOCUMENT_ROOT_HTTP}
 
   wordpress:
     depends_on:
@@ -37,19 +39,22 @@ services:
       - WP_DB_PASSWORD_FILE=${WP_DB_PASSWORD_FILE}
       - WP_DB_HOST=${WP_DB_HOST}
       - WP_SITEURL=${WP_SITEURL}
-      # - WP_HOME=${WP_HOME}
       - WP_SITE_TITLE=${WP_SITE_TITLE}
       - WP_ADMIN_NAME=${WP_ADMIN_NAME}
       - WP_ADMIN_PASSWORD_FILE=${WP_ADMIN_PASSWORD_FILE}
       - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+      - WP_USER_NAME=${WP_USER_NAME}
+      - WP_USER_PASSWORD_FILE=${WP_USER_PASSWORD_FILE}
+      - WP_USER_ROLE=${WP_USER_ROLE}
+      - WP_USER_EMAIL=${WP_USER_EMAIL}
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
-
       interval: 5s
       retries: 10
     secrets:
       - db_password
       - wp_admin_password
+      - wp_user_password
 
   mariadb:
     build: ./requirements/mariadb/
@@ -72,6 +77,21 @@ services:
       - db_root_password
       - db_password
 
+  adminer:
+    depends_on:
+      mariadb:
+        condition: service_healthy
+        restart: true
+    build: ./requirements/bonus/adminer/
+    restart: unless-stopped
+    networks:
+      - docker-network
+    volumes:
+      - db_adminer:${ADMINER_VOLUME}
+    environment:
+      - ADMINER_VOLUME=${ADMINER_VOLUME}
+
+
 # use the default network driver
 networks:
     docker-network:
@@ -92,6 +112,7 @@ volumes:
     #   type: 'none'
     #   o: 'bind'
     #   device: '/home/tmitsuya/data/mariadb'
+  db_adminer:
 
 # Secrets are mounted as a file in /run/secrets/<secret_name> inside the container.
 secrets:
@@ -101,4 +122,6 @@ secrets:
     file: ../secrets/db_root_password.txt
   wp_admin_password:
     file: ../secrets/wp_admin_password.txt
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
 

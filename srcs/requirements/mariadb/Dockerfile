@@ -1,9 +1,5 @@
 FROM debian:bookworm
 
-# RUN apt update && apt install -y \
-#     software-properties-common \
-#     devscripts
-
 # https://mariadb.org/download/?t=repo-config&d=Debian+12+%22Bookworm%22&v=11.4&r_m=xtom_dus
 # Commands to run to import the MariaDB repository key on my Debian system:
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -27,11 +23,11 @@ RUN groupadd -r mysql \
 # Install MariaDB 11.4 from the MariaDB repository
 RUN apt-get update && apt-get install -y --no-install-recommends \
     mariadb-server \
- && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /var/lib/apt/lists/*
 # purge /var/lib/mysql because mariadb installation automatically creates and install db into /var/lib/mysql
 # the directory where database should be set is created by docker compose when mounting it to a volume 
 # and database will be installed later, if it has been not set up yet
- && rm -rf /var/lib/mysql \
+RUN rm -rf /var/lib/mysql \
 # prepare a directory used for the socket and lock files
  && mkdir -p /run/mysqld \
  && chown -R mysql:mysql /run/mysqld \

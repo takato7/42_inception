@@ -1,7 +1,7 @@
 FROM alpine:3.21
 
 # copy php-fpm files from previous build stage
-COPY --from=php-fpm-base /usr/local /usr/local
+COPY --from=php-fpm-base:1.0.0 /usr/local /usr/local
 
 # requirements for php runtime
 RUN apk add --update-cache \

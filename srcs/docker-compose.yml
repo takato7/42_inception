@@ -118,6 +118,19 @@ services:
     environment:
       - FTP_VOLUME=${FTP_VOLUME}
 
+  redis:
+    depends_on:
+      wordpress:
+        condition: service_healthy
+        restart: true
+    build:
+      context: ./requirements/bonus/redis/
+    image: inception-redis:1.0.0
+    restart: unless-stopped
+    networks:
+      - docker-network
+    volumes:
+      - db_mariadb:${REDIS_VOLUME}
 
 # use the default network driver
 networks:

@@ -110,7 +110,7 @@ services:
     restart: unless-stopped
     ports:
       - "20-21:20-21"
-      - "1024-1025:1024-1025"
+      - "1024-1048:1024-1048"
     networks:
       - docker-network
     volumes:

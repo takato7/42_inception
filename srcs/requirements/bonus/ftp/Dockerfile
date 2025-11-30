@@ -34,7 +34,7 @@ COPY conf/vsftpd.conf /etc
 COPY tools/docker-entrypoint.sh /usr/local/bin/
 
 EXPOSE 20-21
-EXPOSE 1024-1025
+EXPOSE 1024-1048
 
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 

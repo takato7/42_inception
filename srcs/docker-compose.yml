@@ -98,6 +98,25 @@ services:
       - db_adminer:${ADMINER_VOLUME}
     environment:
       - ADMINER_VOLUME=${ADMINER_VOLUME}
+  
+  ftp:
+    depends_on:
+      wordpress:
+        condition: service_healthy
+        restart: true
+    build:
+      context: ./requirements/bonus/ftp/
+    image: inception-ftp:1.0.0
+    restart: unless-stopped
+    ports:
+      - "20-21:20-21"
+      - "1024-1025:1024-1025"
+    networks:
+      - docker-network
+    volumes:
+      - db_wordpress:${FTP_VOLUME}
+    environment:
+      - FTP_VOLUME=${FTP_VOLUME}
 
 
 # use the default network driver

@@ -8,8 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	gcc \
 	libc-dev \
 	make \
-	# ftpclient
-	ftp
+	# ftp-client
+	ftp \
+ && rm -rf /var/lib/apt/list/*
 
 ENV VSFTPD_VERSION="3.0.5"
 ENV VSFTPD_URL="https://security.appspot.com/downloads/vsftpd-$VSFTPD_VERSION.tar.gz"
@@ -19,10 +20,12 @@ RUN	mkdir -p $SRC_DIR \
  && cd $SRC_DIR \
  && curl -fsSL -o vsftpd.tar.gz $VSFTPD_URL \
  && tar -zxf vsftpd.tar.gz --strip-components=1 \
+ && rm -rf vsftpd.tar.gz \
  && make \
  && cp vsftpd /usr/local/sbin/vsftpd \
  && cp vsftpd.conf.5 /usr/local/man/man5 \
  && cp vsftpd.8 /usr/local/man/man8 \
+ && cp vsftpd.conf /etc/vsftpd.conf.example \
 # vsftpd needs the (empty) directory /usr/share/empty in the default
  && mkdir -p /usr/share/empty \
 # For anonymous FTP, need the user "ftp" to exist, and have valid home directory (which is NOT owned or writable by the user "ftp")

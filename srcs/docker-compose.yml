@@ -144,6 +144,15 @@ services:
       interval: 5s
       retries: 10
 
+  static-site:
+    build:
+      context: ./requirements/bonus/static-site/
+    image: inception-static-site:1.0.0
+    restart: unless-stopped
+    networks:
+      - docker-network
+
+
 # use the default network driver
 networks:
     docker-network:

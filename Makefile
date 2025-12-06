@@ -7,7 +7,7 @@ YAML_FILE		:=	docker-compose.yml
 
 DOCKER			:=	docker
 COMPOSE			:=	docker compose
-UPFLAGS			:=	-d
+UPFLAGS			:=	-d --remove-orphans
 DOWNFLAGS		:=	-v
 PHP_BASE_IMAGE	:=	php-fpm
 PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm/

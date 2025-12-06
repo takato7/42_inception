@@ -27,6 +27,9 @@ services:
       mariadb:
         condition: service_healthy
         restart: true
+      redis:
+        condition: service_healthy
+        restart: true
     build:
       context: ./requirements/wordpress/
     image: inception-wordpress:1.0.0
@@ -51,6 +54,12 @@ services:
       - WP_USER_PASSWORD_FILE=${WP_USER_PASSWORD_FILE}
       - WP_USER_ROLE=${WP_USER_ROLE}
       - WP_USER_EMAIL=${WP_USER_EMAIL}
+      - WP_REDIS_HOST=${WP_REDIS_HOST}
+      - WP_REDIS_PORT=${WP_REDIS_PORT}
+      - WP_REDIS_PREFIX=${WP_REDIS_PREFIX}
+      - WP_REDIS_DATABASE=${WP_REDIS_DATABASE}
+      - WP_REDIS_TIMEOUT=${WP_REDIS_TIMEOUT}
+      - WP_REDIS_READ_TIMEOUT=${WP_REDIS_READ_TIMEOUT}
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
       interval: 5s
@@ -120,7 +129,7 @@ services:
 
   redis:
     depends_on:
-      wordpress:
+      mariadb:
         condition: service_healthy
         restart: true
     build:
@@ -129,8 +138,11 @@ services:
     restart: unless-stopped
     networks:
       - docker-network
-    volumes:
-      - db_mariadb:${REDIS_VOLUME}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      start_period: 10s
+      interval: 5s
+      retries: 10
 
 # use the default network driver
 networks:

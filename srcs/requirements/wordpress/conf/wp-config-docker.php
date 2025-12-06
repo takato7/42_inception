@@ -105,6 +105,15 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($_SERVER['HTTP_X_FORWARD
 	$_SERVER['HTTPS'] = 'on';
 }
 
+// Redis cache configration
+// https://github.com/rhubarbgroup/redis-cache/#configuration
+define( 'WP_REDIS_HOST', getenv_docker('WP_REDIS_HOST', 'redis') );
+define( 'WP_REDIS_PORT', getenv_docker('WP_REDIS_PORT', '6379') );
+define( 'WP_REDIS_PREFIX', getenv_docker('WP_REDIS_PREFIX', 'wp-redis') );
+define( 'WP_REDIS_DATABASE', getenv_docker('WP_REDIS_DATABASE', '0') );
+define( 'WP_REDIS_TIMEOUT', getenv_docker('WP_REDIS_TIMEOUT', '1') );
+define( 'WP_REDIS_READ_TIMEOUT', getenv_docker('WP_REDIS_READ_TIMEOUT', '1') );
+
 /* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */

@@ -65,6 +65,11 @@ if [ ! -e "${WP_VOLUME}/index.php" ] && [ ! -e "${WP_VOLUME}/wp-includes/version
 			--role=$WP_USER_ROLE \
 			--user_pass="$(< "$WP_USER_PASSWORD_FILE")" \
 			--porcelain
+	
+	echo "install Redis Object Cashe plugin"
+	# https://developer.wordpress.org/cli/commands/plugin/install/
+	wp plugin install --allow-root --path=$WP_VOLUME \
+			redis-cache --activate
 
 fi
 

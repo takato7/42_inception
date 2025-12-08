@@ -10,7 +10,7 @@ ENV	SRC_DIR="/var/app"
 
 WORKDIR	$SRC_DIR
 
-COPY app/requirements.txt .
+COPY tools/requirements.txt .
 
 RUN python3 -m venv .venv \
  && . .venv/bin/activate \
@@ -22,7 +22,7 @@ ENV	PATH="$VIRTUAL_ENV:$PATH"
 RUN adduser -u 82 -D -S -G www-data www-data \
  && chown -R www-data:www-data $SRC_DIR
 
-COPY --chown=www-data:www-data app .
+COPY --chown=www-data:www-data tools .
 
 USER www-data
 

@@ -10,7 +10,7 @@ group="www-data"
 admnr_source="/usr/src/adminer"
 admnr_file="adminer.php"
 
-if [ -z $ADMINER_VOLUME ]; then
+if [ -z ${ADMINER_VOLUME:-} ]; then
 	export "ADMINER_VOLUME=/var/www/html"
 	mkdir -p $ADMINER_VOLUME
 fi

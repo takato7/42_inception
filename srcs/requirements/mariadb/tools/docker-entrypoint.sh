@@ -97,7 +97,7 @@ function docker_setup_db()
 
 
 # define database directory if it's not been set
-if [ -z $MARIADB_VOLUME ]; then
+if [ -z ${MARIADB_VOLUME:-} ]; then
 	export "MARIADB_VOLUME=/var/lib/mysql"
 	mkdir -p $MARIADB_VOLUME
 fi

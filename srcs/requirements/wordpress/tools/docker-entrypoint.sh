@@ -9,7 +9,7 @@ user="www-data"
 group="www-data"
 wp_source="/usr/src/wordpress"
 
-if [ -z $WP_VOLUME ]; then
+if [ -z ${WP_VOLUME:-} ]; then
 	export "WP_VOLUME=/var/www/html"
 	mkdir -p $WP_VOLUME
 fi

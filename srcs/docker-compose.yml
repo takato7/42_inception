@@ -152,6 +152,22 @@ services:
     networks:
       - docker-network
 
+  uptime-kuma:
+    build:
+      context: ./requirements/bonus/uptime-kuma/
+    image: inception-uptime-kuma:1.0.0
+    restart: unless-stopped
+    networks:
+      - docker-network
+    volumes:
+      - db_uptime-kuma:${UPTIME_KUMA_VOLUME}/data
+    environment:
+      - UPTIME_KUMA_DB_TYPE=${UPTIME_KUMA_DB_TYPE}
+      - UPTIME_KUMA_VOLUME=${UPTIME_KUMA_VOLUME}
+    extra_hosts:
+      - "$DOMAIN_NAME:host-gateway"
+    secrets:
+      - kuma_user_password
 
 # use the default network driver
 networks:
@@ -174,6 +190,17 @@ volumes:
     #   o: 'bind'
     #   device: '/home/tmitsuya/data/mariadb'
   db_adminer:
+    # driver: local
+    # driver_opts:
+    #   type: 'none'
+    #   o: 'bind'
+    #   device: '/home/tmitsuya/data/adminer'
+  db_uptime-kuma:
+    # driver: local
+    # driver_opts:
+    #   type: 'none'
+    #   o: 'bind'
+    #   device: '/home/tmitsuya/data/uptime-kuma'
 
 # Secrets are mounted as a file in /run/secrets/<secret_name> inside the container.
 secrets:
@@ -185,4 +212,5 @@ secrets:
     file: ../secrets/wp_admin_password.txt
   wp_user_password:
     file: ../secrets/wp_user_password.txt
-
+  kuma_user_password:
+    file: ../secrets/kuma_user_password.txt

@@ -1,6 +1,0 @@
-Flask
-python-dotenv
-watchdog
-greenlet
-gunicorn
-

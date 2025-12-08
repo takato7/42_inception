@@ -61,4 +61,9 @@ rm:
 rmi:
 	docker image prune -a
 
-.PHONY: all build build-base up down ps config log exec run rm rmi
+clean:
+	docker image prune -f
+	docker container prune -f
+	docker system prune -f
+
+.PHONY: all build build-base up down ps config log exec run rm rmi clean

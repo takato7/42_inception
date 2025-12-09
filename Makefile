@@ -1,14 +1,19 @@
 SRCS_DIR		:=	srcs
 
 VOLUME_ROOT		:=	/home/tmitsuya/data
-VOLUME_DIRS		:=	$(VOLUME_ROOT)/wordpress $(VOLUME_ROOT)/mariadb
+VOLUME_DIRS		:=	$(VOLUME_ROOT)/wordpress \
+					$(VOLUME_ROOT)/mariadb \
+					$(VOLUME_ROOT)/adminer \
+					$(VOLUME_ROOT)/uptime-kuma
 
 YAML_FILE		:=	docker-compose.yml
 
 DOCKER			:=	docker
 COMPOSE			:=	docker compose
+
 UPFLAGS			:=	-d --remove-orphans
 DOWNFLAGS		:=	-v
+
 PHP_BASE_IMAGE	:=	php-fpm
 PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm/
 PHP_BASE_NAME	:=	$(PHP_BASE_IMAGE)-base
@@ -32,12 +37,13 @@ down:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) down $(DOWNFLAGS)
 
 ps:
+	@echo "\n============ Docker containers ============"
 	$(DOCKER) ps -a
 
 config:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) config
 
-log:
+logs:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) logs
 
 exec:
@@ -54,16 +60,34 @@ run:
 	read command; \
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) run -it $$serive_name $$command
 
-rm:
-	docker stop $$(docker ps -qa)
-	docker rm $$(docker ps -qa)
+ls: ps
+	@echo "\n============ Docker images ============"
+	@$(DOCKER) images
+	@echo "\n============ Docker volumes ============"
+	@$(DOCKER) volume ls
+	@echo "\n============ Docker network ============"
+	@$(DOCKER) network ls
+
+rmc:
+	@$(DOCKER) stop $$($(DOCKER) ps -qa)
+	@$(DOCKER) rm $$($(DOCKER) ps -qa)
 
 rmi:
-	docker image prune -a
+	@$(DOCKER) rmi -f $$($(DOCKER) images -qa)
 
-clean:
-	docker image prune -f
-	docker container prune -f
-	docker system prune -f
+rmv:
+	@$(DOCKER) volume rm $$($(DOCKER) volume ls -q)
 
-.PHONY: all build build-base up down ps config log exec run rm rmi clean
+rmn:
+	@$(DOCKER) network rm $$($(DOCKER) network ls -q) 2>/dev/null
+
+prune:
+	@$(DOCKER) image prune -f
+	@$(DOCKER) container prune -f
+	@$(DOCKER) system prune -f
+
+clean: rmc rmn rmv prune
+
+fclean: clean rmi
+
+.PHONY: all build build-base up down ps config log exec run ls rmc rmi rmv rmn prune clean fclean

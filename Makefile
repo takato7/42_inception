@@ -19,32 +19,28 @@ PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm/
 PHP_BASE_NAME	:=	$(PHP_BASE_IMAGE)-base
 IMAGE_VIRSION	:=	1.0.0
 
-all: up
+all: build up
 
 build-base:
-	$(DOCKER) build $(PHP_BASE_DIR) -t $(PHP_BASE_NAME):$(IMAGE_VIRSION)
+	@$(DOCKER) build $(PHP_BASE_DIR) -t $(PHP_BASE_NAME):$(IMAGE_VIRSION)
 
 build: build-base
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) build
+	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) build
 
-up: build | $(VOLUME_DIRS)
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) up $(UPFLAGS)
+up: | $(VOLUME_DIRS)
+	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) up $(UPFLAGS)
 
 $(VOLUME_DIRS):
-	mkdir -p $@
+	@mkdir -p $@
 
 down:
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) down $(DOWNFLAGS)
-
-ps:
-	@echo "\n============ Docker containers ============"
-	$(DOCKER) ps -a
+	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) down
 
 config:
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) config
+	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) config
 
 logs:
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) logs
+	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) logs
 
 exec:
 	@echo -n "Enter the name of service listed in compose.yml file to execute: "; \
@@ -60,13 +56,27 @@ run:
 	read command; \
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) run -it $$serive_name $$command
 
+ps:
+	@echo "\n============ Docker containers ============"
+	@$(DOCKER) ps -a
+	@echo "\n--> to remove containers, use \"make rmc\" \
+	or if want to remove the network as well, use \"make down\""
+
 ls: ps
 	@echo "\n============ Docker images ============"
 	@$(DOCKER) images
+	@echo "\n--> to remove images, use \"make rmi\""
 	@echo "\n============ Docker volumes ============"
 	@$(DOCKER) volume ls
+	@echo "\n--> to remove volumes, use \"make rmv\""
 	@echo "\n============ Docker network ============"
 	@$(DOCKER) network ls
+	@echo "\n--> to remove volumes, use \"make rmn\""
+
+hostdb:
+	@echo "these are volumes in $(VOLUME_ROOT) which are reflecting each named docker volumes"
+	@echo "Not to be deleted even when removed docker volumes.\n"
+	@ls -la $(VOLUME_ROOT)/*
 
 rmc:
 	@$(DOCKER) stop $$($(DOCKER) ps -qa)

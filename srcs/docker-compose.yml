@@ -166,8 +166,6 @@ services:
       - UPTIME_KUMA_VOLUME=${UPTIME_KUMA_VOLUME}
     extra_hosts:
       - "$DOMAIN_NAME:host-gateway"
-    secrets:
-      - kuma_user_password
 
 # use the default network driver
 networks:
@@ -178,29 +176,29 @@ networks:
 # https://forums.docker.com/t/how-to-mount-docker-volume-along-with-subfolders-on-the-host/120482/2
 volumes:
   db_wordpress:
-    # driver: local
-    # driver_opts:
-    #   type: 'none'
-    #   o: 'bind'
-    #   device: '/home/tmitsuya/data/wordpress'
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$HOST_DB_PATH/wordpress'
   db_mariadb:
-    # driver: local
-    # driver_opts:
-    #   type: 'none'
-    #   o: 'bind'
-    #   device: '/home/tmitsuya/data/mariadb'
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$HOST_DB_PATH//mariadb'
   db_adminer:
-    # driver: local
-    # driver_opts:
-    #   type: 'none'
-    #   o: 'bind'
-    #   device: '/home/tmitsuya/data/adminer'
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$HOST_DB_PATH/adminer'
   db_uptime-kuma:
-    # driver: local
-    # driver_opts:
-    #   type: 'none'
-    #   o: 'bind'
-    #   device: '/home/tmitsuya/data/uptime-kuma'
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$HOST_DB_PATH/uptime-kuma'
 
 # Secrets are mounted as a file in /run/secrets/<secret_name> inside the container.
 secrets:
@@ -212,5 +210,3 @@ secrets:
     file: ../secrets/wp_admin_password.txt
   wp_user_password:
     file: ../secrets/wp_user_password.txt
-  kuma_user_password:
-    file: ../secrets/kuma_user_password.txt

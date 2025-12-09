@@ -15,7 +15,7 @@ UPFLAGS			:=	-d --remove-orphans
 DOWNFLAGS		:=	-v
 
 PHP_BASE_IMAGE	:=	php-fpm
-PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm/
+PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm
 PHP_BASE_NAME	:=	$(PHP_BASE_IMAGE)-base
 IMAGE_VIRSION	:=	1.0.0
 
@@ -72,6 +72,10 @@ ls: ps
 	@echo "\n============ Docker network ============"
 	@$(DOCKER) network ls
 	@echo "\n--> to remove volumes, use \"make rmn\""
+	@echo "\n============ Docker system usage ============"
+	@$(DOCKER) system df
+	@echo "\n--> to remove unused files, use \"make prune\""
+	@echo "--> if want to remove everything, use \"make clean\""
 
 hostdb:
 	@echo "these are volumes in $(VOLUME_ROOT) which are reflecting each named docker volumes"
@@ -79,25 +83,23 @@ hostdb:
 	@ls -la $(VOLUME_ROOT)/*
 
 rmc:
-	@$(DOCKER) stop $$($(DOCKER) ps -qa)
-	@$(DOCKER) rm $$($(DOCKER) ps -qa)
+	@$(DOCKER) stop $$($(DOCKER) ps -qa) 2>/dev/null || true
+	@$(DOCKER) rm $$($(DOCKER) ps -qa) 2>/dev/null || true
 
 rmi:
-	@$(DOCKER) rmi -f $$($(DOCKER) images -qa)
+	@$(DOCKER) rmi -f $$($(DOCKER) images -qa) 2>/dev/null || true
 
 rmv:
-	@$(DOCKER) volume rm $$($(DOCKER) volume ls -q)
+	@$(DOCKER) volume rm $$($(DOCKER) volume ls -q) 2>/dev/null || true
 
 rmn:
-	@$(DOCKER) network rm $$($(DOCKER) network ls -q) 2>/dev/null
+	@$(DOCKER) network rm $$($(DOCKER) network ls -q) 2>/dev/null || true
 
 prune:
 	@$(DOCKER) image prune -f
 	@$(DOCKER) container prune -f
 	@$(DOCKER) system prune -f
 
-clean: rmc rmn rmv prune
+clean: down rmv rmi prune
 
-fclean: clean rmi
-
-.PHONY: all build build-base up down ps config log exec run ls rmc rmi rmv rmn prune clean fclean
+.PHONY: all build build-base up down ps config log exec run ls rmc rmi rmv rmn prune clean

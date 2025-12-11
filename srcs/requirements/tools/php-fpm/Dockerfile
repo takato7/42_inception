@@ -48,11 +48,12 @@ RUN mkdir -p $SRC_DIR \
 ENV INSTALL_DIR=/usr/local
 
 # inject my php-fpm configuration file
+# set daemonize = no and include=/usr/local/etc/php-fpm.d/*.conf (for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf")
 COPY conf/php-fpm.conf $INSTALL_DIR/etc/
 # to prevent Nginx from passing requests to the PHP-FPM backend if the file does not exist, allowing us to prevent arbitrarily script injection. 
 # (fix this by setting the cgi.fix_pathinfo directive to 0 within our php.ini file.)
 COPY conf/php.ini $INSTALL_DIR/php/
-# set daemonize = no and include=/usr/local/etc/php-fpm.d/*.conf (for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf")
+# set "clear_env = no" to all environment variables available to PHP code; via getenv(), $_ENV and $_SERVER that are to be used in wp-config-docker.php
 COPY conf/www.conf $INSTALL_DIR/etc/php-fpm.d/
 
 # clean up unneccesarry files and strip unneeded symbols from binaries (to reduce image size)

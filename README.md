@@ -114,7 +114,7 @@ make ls
 	- [Flask behind a proxy](https://flask.palletsprojects.com/en/stable/deploying/proxy_fix/)
 	- [Running Gunicorn](https://flask.palletsprojects.com/en/stable/deploying/gunicorn/)
 - **Uptime-kuma**
-	- [Uptime-Kuma GitHub](https://github.com/louislam/uptime-kuma)
+	- [Uptime-kuma GitHub](https://github.com/louislam/uptime-kuma)
 	- [Using nvm in Docker](https://github.com/nvm-sh/nvm#installing-in-docker)
 	- [pm2 documentation](https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/)
 

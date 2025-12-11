@@ -18,7 +18,6 @@ COPY conf/mariadb.sources /etc/apt/sources.list.d/
 # to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mysql \
  && useradd -r -g mysql mysql
- 	# --home-dir /var/lib/mysql
 
 # Install MariaDB 11.4 from the MariaDB repository
 RUN apt-get update && apt-get install -y --no-install-recommends \

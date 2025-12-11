@@ -10,7 +10,7 @@ function docker_setup_query()
 	root_password="$(< "$MARIADB_ROOT_PASSWORD_FILE")"
 	password="$(< "$MARIADB_PASSWORD_FILE")"
 	
-	# Securing system user
+	# Securing system users (equivalent to running mysql_secure_installation)
 	# https://mariadb.com/docs/server/clients-and-utilities/deployment-tools/mariadb-secure-installation
 	# (test database is skipped during the installation)
 	set_root_localhost_pass="SET PASSWORD FOR 'root'@'localhost'= PASSWORD( '${root_password}' );"
@@ -33,13 +33,6 @@ function docker_setup_query()
 
 function docker_install_db()
 {
-	# echo "Create directories for the database, the socket and lock files"
-	# mkdir -p "$datadir" "/run/mysqld"
-	# chown -R "mysql:mysql" "$datadir" "/run/mysqld"
-	# ensure that /run/mysqld (used for socket and lock files) is writable 
-	# regardless of the UID our mysqld instance ends up having at runtime
-	# chmod 1777 "/run/mysqld"
-	
 	echo "Start the mariadb install process"
 	mariadb-install-db --datadir=$MARIADB_VOLUME --skip-test-db
 	echo "End of the install process"

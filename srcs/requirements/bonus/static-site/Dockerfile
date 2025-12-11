@@ -28,6 +28,7 @@ USER www-data
 
 EXPOSE 8000
 
+# https://flask.palletsprojects.com/en/stable/deploying/gunicorn/
 CMD [ "gunicorn", \
 	  "app:app", \
 	  "--workers", "4", \

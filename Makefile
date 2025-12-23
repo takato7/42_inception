@@ -71,7 +71,7 @@ ls: ps
 	@echo "\n--> to remove volumes, use \"make rmv\""
 	@echo "\n============ Docker network ============"
 	@$(DOCKER) network ls
-	@echo "\n--> to remove volumes, use \"make rmn\""
+	@echo "\n--> to remove networks, use \"make rmn\""
 	@echo "\n============ Docker system usage ============"
 	@$(DOCKER) system df
 	@echo "\n--> to remove unused files, use \"make prune\""

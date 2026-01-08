@@ -75,10 +75,10 @@ Type the following URL into a web browser:
 - **URL** - https://tmitsuya.42.fr/wp-admin
 
 Login with the credentials below:
-**General user**
+#### General user ####
 - **Username** - `tmitsuya` (defined as `WP_USER_NAME` in `.env`)
 - **Password** - see `wp_user_password.txt`
-**As an admin user**
+#### Admin user ####
 - **Username** - `wp_controller` (defined as `WP_ADMIN_NAME` in `.env`)
 - **Password** - see `wp_admin_password.txt`
 
@@ -98,8 +98,8 @@ Login with the credentials below:
 ### Monitoring - Uptime-kuma ###
 Type the following URL into a web browser:
 - **URL** - https://monitor.tmitsuya.42.fr
-
 > You need to create an account the first time you access the service.
+> Try adding a new monitor clicking the **Add New Monitor** button.
 > When setting up a new monitor for the other services, check the **Ignore TLS/SSL errors for HTTPS websites** because self-signed certificates are used.
 
 ### FTP Access ###

@@ -9,8 +9,8 @@ This project aims to broaden knowledge of system administration by using Docker.
 
 ## Project Description ##
 
-**Main Design for This Project** \
-This project sets up a **LEMP stack infrastructure** that hosts a WordPress website.  Additional services useful for operating a website are included. Each service runs in its own **containerized environment**, isolated by Docker. **Docker Compose** is used to manage and orchestrate all services together. \
+***Main Design for This Project*** \
+This project sets up a **LEMP stack infrastructure** that hosts a WordPress website.  Additional services useful for operating a website are included. Each service runs in its own **containerized environment**, isolated by Docker. **Docker Compose** is used to manage and orchestrate all services together.
 ### Implemented Services ###
 - **Nginx** - HTTP server for handling web requests
 - **MariaDB** - Database for WordPress
@@ -32,8 +32,7 @@ Docker Compose simplifies orchestration by:
 - Creating persistent volumes
 
 ***Docker Network for Services Communication*** \
-When Docker Engine starts for the first time, it provides a single built-in network called the "default bridge" network, which is isolated from the host system. \
-This project uses a user-defined network, whick allows:
+When Docker Engine starts for the first time, it provides a single built-in network called the "default bridge" network, which is isolated from the host system. This project uses a user-defined network, whick allows:
 - Containers to communicate using container names
 - Separattion of groups of containers through custom networks
 
@@ -43,7 +42,7 @@ This project uses Docker volumes for services requiring data persistence and mou
 When binding an external directory to a path inside a container that does not yet exist, Docker automatically creates the path inside the container. The binding and/or creation of the path occurs after the container is created but before the Docker entrypoint script runs, if one is set.
 
 ***Docker Secrets over Environment Variables*** \
-Credentials in this project are stored using Docker secrets, placed inside a secrets/ directory at the project root.
+Credentials in this project are stored using Docker secrets, placed inside a `secrets/` directory at the project root.
 This is more secure than storing credentials in a .env file as environment variables because:
 - Secrets are encrypted during transit and at rest in a Docker swarm
 - Secrets are not committed to version control accidentally

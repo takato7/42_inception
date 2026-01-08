@@ -19,13 +19,16 @@ PHP_BASE_DIR	:=	$(SRCS_DIR)/requirements/tools/php-fpm
 PHP_BASE_NAME	:=	$(PHP_BASE_IMAGE)-base
 IMAGE_VIRSION	:=	1.0.0
 
+SERVICE			?=
+
+
 all: build up
 
 build-base:
 	@$(DOCKER) build $(PHP_BASE_DIR) -t $(PHP_BASE_NAME):$(IMAGE_VIRSION)
 
 build: build-base
-	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) build
+	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) build $(SERVICE)
 
 up: | $(VOLUME_DIRS)
 	@$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) up $(UPFLAGS)

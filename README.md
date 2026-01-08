@@ -9,8 +9,8 @@ This project aims to broaden knowledge of system administration by using Docker.
 
 ## Project Description ##
 
-**Main Design for This Project**
-This project sets up a **LEMP stack infrastructure** that hosts a WordPress website. Additional services useful for operating a website are included. Each service runs in its own **containerized environment**, isolated by Docker. **Docker Compose** is used to manage and orchestrate all services together. 
+**Main Design for This Project** \
+This project sets up a **LEMP stack infrastructure** that hosts a WordPress website.  Additional services useful for operating a website are included. Each service runs in its own **containerized environment**, isolated by Docker. **Docker Compose** is used to manage and orchestrate all services together. \
 ### Implemented Services ###
 - **Nginx** - HTTP server for handling web requests
 - **MariaDB** - Database for WordPress
@@ -22,26 +22,27 @@ This project sets up a **LEMP stack infrastructure** that hosts a WordPress webs
 - **Gunicorn + Flask** - WSGI server and framework serving a static website
 - **Uptime-kuma** - Monitoring tool for the web services
 
-***Why Docker instead of Virtual Machine***
+***Why Docker instead of Virtual Machine*** \
 Docker virtualizes at the **application layer**, while virtual machines virtualize at the **kernel layer**, including the entire operating system. Because of this, virtual machines require significantly more system resources, while Docker containers are lightweight and start much faster. As Services don't require a full OS for each instance, making Docker a suitable choice.
 
-***Docker Compose Simplification***
+***Docker Compose Simplification*** \
 Docker Compose simplifies orchestration by:
 - Starting and stopping services together
 - Managing networks for inter-container communication
 - Creating persistent volumes
 
-***Docker Network for Services Communication***
-When Docker Engine starts for the first time, it provides a single built-in network called the "default bridge" network, which is isolated from the host system.
+***Docker Network for Services Communication*** \
+When Docker Engine starts for the first time, it provides a single built-in network called the "default bridge" network, which is isolated from the host system. \
 This project uses a user-defined network, whick allows:
 - Containers to communicate using container names
 - Separattion of groups of containers through custom networks
 
-***Docker Volumes and Bind Mounts***
-Docker volumes are created and managed by Docker and preserved even when containers are removed. You can also bind a host directory to a path inside a container, called the "bind mount". 
-This project uses Docker volumes for services requiring data persistence and mounts them to appropriate directories on the host.
+***Docker Volumes and Bind Mounts*** \
+Docker volumes are created and managed by Docker and preserved even when containers are removed. You can also bind a host directory to a path inside a container, called the "bind mount". \
+This project uses Docker volumes for services requiring data persistence and mounts them to appropriate directories on the host. \
+When binding an external directory to a path inside a container that does not yet exist, Docker automatically creates the path inside the container. The binding and/or creation of the path occurs after the container is created but before the Docker entrypoint script runs, if one is set.
 
-***Docker Secrets over Environment Variables***
+***Docker Secrets over Environment Variables*** \
 Credentials in this project are stored using Docker secrets, placed inside a secrets/ directory at the project root.
 This is more secure than storing credentials in a .env file as environment variables because:
 - Secrets are encrypted during transit and at rest in a Docker swarm
@@ -109,6 +110,7 @@ make ls
 - **Vsftpd**
 	- [About vsftpd](https://security.appspot.com/vsftpd.html)
 	- [Configuration](https://security.appspot.com/vsftpd/vsftpd_conf.html)
+    - [Vsftpd's secure design](https://security.appspot.com/vsftpd/DESIGN.txt)
 - **Gunicorn / Flask**
 	- [Flask Documentation](https://flask.palletsprojects.com/en/stable/)
 	- [Flask behind a proxy](https://flask.palletsprojects.com/en/stable/deploying/proxy_fix/)

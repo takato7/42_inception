@@ -95,17 +95,17 @@
 - **Dockerfile**
     - Install python3 and dependencies such as Flask, Gunicorn.
     - Run Gunicorn with the appropriate bind address.
-- **Application Structure**
-    tools/ \
-    ├── app.py \
-    ├── requirements.txt \
-    │   ├── Flask \
-    │   ├── python-dotenv \
-    │   ├── watchdog \
-    │   ├── greenlet \
-    │   └── gunicorn \
-    └── templates/ \
-        └── index.html \
+- **Application Structure** \
+        tools/ \
+        ├── app.py \
+        ├── requirements.txt \
+        │   ├── Flask \
+        │   ├── python-dotenv \
+        │   ├── watchdog \
+        │   ├── greenlet \
+        │   └── gunicorn \
+        └── templates/ \
+            └── index.html
 
 ### Uptime-Kuma ###
 - **Dockerfile**
@@ -201,6 +201,20 @@ make exec
 To run a container and execute a command from an specific image, run the following command and then specify a service name listed in docker-compose.yml file and the command:
 ```sh
 make run
+```
+
+### Note: ###
+Even if you remove Docker volumes, the data in the host’s binded paths persists. When new Docker volumes are created, these host paths are automatically re-bound to them.
+
+If a container path that is mounted to a Docker volume contains data during the build process, and the volume is later bound to a host path, the data on the host **overrides** the existing container data.
+
+> To completely clean everything and start from scratch, you must also delete the host data. Use:
+```sh
+sudo make rm_hostdb
+```
+You can inspect the host paths that are binded to Docker volumes with:
+```sh
+make hostdb
 ```
 
 ---

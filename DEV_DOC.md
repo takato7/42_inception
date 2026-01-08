@@ -1,9 +1,9 @@
 ## How to set up the environment from scratch ##
 
-# Docker & Docker Compose #
+### Docker & Docker Compose ###
 - [Install Docker & Docker Compose](https://docs.docker.com/engine/install/debian/#install-using-the-repository)
 
-# Nginx #
+### Nginx ###
 - **Dockerfile**
 - Install Nginx with the Openssl module to handle HTTPS connections. [Source code & build instructions](https://github.com/nginx/nginx).
 - **Configuration**
@@ -14,7 +14,7 @@
         - [Location blocks](https://nginx.org/en/docs/http/ngx_http_core_module.html#location)
         - [Reverse proxy configuration](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 
-# MariaDB #
+### MariaDB ###
 - **Dockerfile**
     - Install mariadb-server and create appropriate system user.
 - **Configuration**
@@ -26,7 +26,7 @@
     - Create WordPress database using mariadb-client.
     - These steps are executed in the docker-entrypoint script after the container creation.
 
-# PHP-FPM #
+### PHP-FPM ###
 - **Dockerfile**
     - Install PHP with PHP-FPM, MySQL support.
     - This image is used as a base image for PHP-FPM, WordPress and Adminer containers.
@@ -40,7 +40,7 @@
         - www.conf
             - Set "clear_env = no" to all environment variables available to PHP code; via getenv(), $_ENV and $_SERVER that are to be used in wp-config-docker.php	
 
-# WordPress #
+### WordPress ###
 - **Dockerfile**
     - Copy PHP_FPM binaries from the base image.
     - Download WordPress source files and WP-CLI.
@@ -55,7 +55,7 @@
     - Create an admin user in the database by WP-CLI.
     - Install Redis Object Cache plugin by WP-CLI.
 
-# Redis #
+### Redis ###
 - **Dockerfile**
     - Download and build source files for Redis.
 - **Configuration**
@@ -68,12 +68,12 @@
                 - "maxmemory-policy allkeys-lfu", all the keys will be evicted using an approximated LRU algorithm as long as we hit the 10 megabyte memory limit.
                 - [Redis cache configuration](https://redis.io/docs/latest/operate/oss_and_stack/management/config/#configuring-redis-as-a-cache)
 
-# Adminer #
+### Adminer ###
 - **Dockerfile**
     - Copy PHP-FPM binaries from the base image.
     - Download the adminer.php file.
 
-# Vsftpd #
+### Vsftpd ###
 - **Dockerfile**
     - Build vsftpd from source following the INSTALL file. 
         - [About vsftpd](https://security.appspot.com/vsftpd.html)
@@ -91,7 +91,7 @@
         - Dynamic Ports (Passive Mode)
             - The server tells the client which port to use, and the client then connects to that specific port on the server for the data transfer.
 
-# Gunicorn/Flask (Static Site) #
+### Gunicorn/Flask (Static Site) ###
 - **Dockerfile**
     - Install python3 and dependencies such as Flask, Gunicorn.
     - Run Gunicorn with the appropriate bind address.
@@ -107,7 +107,7 @@
     └── templates/ \
         └── index.html \
 
-# Uptime-Kuma #
+### Uptime-Kuma ###
 - **Dockerfile**
     - Install Node.js for the runtime using NVM (node version manager).
     - Install pm2
@@ -117,7 +117,7 @@
         - Sets the domain name as a host entry so it can be resolved.
         - In this project, Docker compose manages this using the "extra_host" attribute.
 
-# Other configurations #
+### Other configurations ###
 - **Domain name**
     - Configure the domain name
         - Edit /etc/hosts so the domain name points to the local IP (host) address.

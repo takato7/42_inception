@@ -98,6 +98,9 @@ rmv:
 rmn:
 	@$(DOCKER) network rm $$($(DOCKER) network ls -q) 2>/dev/null || true
 
+rm_hostdb:
+	@rm -rf $(VOLUME_ROOT)/*
+
 prune:
 	@$(DOCKER) image prune -f
 	@$(DOCKER) container prune -f

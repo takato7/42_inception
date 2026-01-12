@@ -90,6 +90,7 @@
             - In Active FTP, once a data transfer is requested, the server initiates a connection back to the client on its (client's) specified data port, often port 20 on the server side, to send the file.
         - Dynamic Ports (Passive Mode)
             - The server tells the client which port to use, and the client then connects to that specific port on the server for the data transfer.
+    - Check the accessibility with `ftp ftp://localhost -P 21` inside a container. see `ftp --help`
 
 ### Gunicorn/Flask (Static Site) ###
 - **Dockerfile**

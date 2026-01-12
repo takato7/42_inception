@@ -53,11 +53,11 @@ exec:
 	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) exec -it $$serive_name $$command
 
 run:
-	@echo -n "Enter the name of service listed in compose.yml file to execute: "; \
+	@echo -n "Enter the name of an image to run: "; \
 	read serive_name; \
 	echo -n "Enter the command: "; \
 	read command; \
-	$(COMPOSE) -f $(SRCS_DIR)/$(YAML_FILE) run -it $$serive_name $$command
+	$(DOCKER) run -it $$serive_name $$command
 
 ps:
 	@echo "\n============ Docker containers ============"

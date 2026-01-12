@@ -1,4 +1,4 @@
-FROM alpine:3.21
+FROM alpine:3.22
 
 # download nginx's source code from git repository
 ADD "https://github.com/nginx/nginx.git" /build/nginx

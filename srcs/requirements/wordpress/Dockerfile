@@ -1,4 +1,4 @@
-FROM alpine:3.21
+FROM alpine:3.22
 
 # copy php-fpm files from previous build stage
 COPY --from=php-fpm-base:1.0.0 /usr/local /usr/local

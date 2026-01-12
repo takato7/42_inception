@@ -1,4 +1,4 @@
-FROM alpine:3.21
+FROM alpine:3.22
 
 ENV PHP_VERSION="8.3.25"
 ENV PHP_URL="https://www.php.net/distributions/php-$PHP_VERSION.tar.xz"

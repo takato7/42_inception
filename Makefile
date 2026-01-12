@@ -83,7 +83,7 @@ ls: ps
 hostdb:
 	@echo "these are volumes in $(VOLUME_ROOT) which are reflecting each named docker volumes"
 	@echo "Not to be deleted even when removed docker volumes.\n"
-	@ls -la $(VOLUME_ROOT)/*
+	@ls -la $(VOLUME_ROOT)/* 2>/dev/null || true
 
 rmc:
 	@$(DOCKER) stop $$($(DOCKER) ps -qa) 2>/dev/null || true
